@@ -4209,8 +4209,10 @@ attachEventListeners(){
         
     const mainApp = document.getElementById('main-app');
 
+    // 1. Event Listener สำหรับฟอร์มอื่นๆ (ยกเว้น Barcode)
     mainApp.addEventListener('submit', (e) => { 
         if (e.target.id === 'add-to-cart-form') { e.preventDefault(); this.addToCart(e); }
+        // ❌ [ลบแล้ว] ไม่ผูก scan-barcode-form ที่นี่ เพื่อป้องกันการชนกับ Keydown Handler
         if (e.target.id === 'product-form') { e.preventDefault(); this.saveProduct(e); } 
         if (e.target.id === 'store-form') { e.preventDefault(); this.saveStore(e); } 
         if (e.target.id === 'stock-in-form') { e.preventDefault(); this.saveStockIn(e); }
@@ -4223,6 +4225,15 @@ attachEventListeners(){
         if (e.target.id === 'seller-transfer-report-form') { e.preventDefault(); this.runSellerTransferSummary(); }
         if (e.target.id === 'backup-password-form') { e.preventDefault(); this.saveBackupPassword(e); }
     });
+    
+    // 2. Event Listener สำหรับฟอร์มบาร์โค้ด (ทำงานเมื่อคลิก "ตกลง" หรือกด Enter)
+    // การทำงาน: เมื่อ Submit ฟอร์มนี้จะเรียก handleBarcodeScan()
+    const scanBarcodeForm = document.getElementById('scan-barcode-form');
+    if (scanBarcodeForm) {
+        scanBarcodeForm.addEventListener('submit', (e) => {
+            this.handleBarcodeScan(e); // handleBarcodeScan() มี e.preventDefault() อยู่แล้ว
+        });
+    }
 
 mainApp.addEventListener('click', (e) => { 
     // --- 1. POS Operations ---
@@ -4451,22 +4462,24 @@ mainApp.addEventListener('click', (e) => {
     });
 
     // ---------------------------------------------------
-    // 🚀 เพิ่ม Event: Enter เพื่อกดปุ่ม “ยืนยันการขาย”
+    // 🚀 Event: Enter ถูกสงวนให้ "ยืนยันการขาย" เท่านั้น
     // ---------------------------------------------------
     document.addEventListener('keydown', (e) => {
         if (e.key === "Enter") {
-            e.preventDefault();
+            // ป้องกันไม่ให้ Enter ไป Submit ฟอร์ม Barcode (ซึ่งถูกผูกไว้กับปุ่ม ตกลง แทน)
+            e.preventDefault(); 
 
             const posPage = document.getElementById('page-pos');
-            if (posPage && posPage.style.display !== "none") {
+            if (posPage && posPage.classList.contains('active')) { 
                 const confirmBtn = document.getElementById('process-sale-btn');
+                
+                // สั่งให้ปุ่มยืนยันการขายทำงานเมื่อกด Enter
                 if (confirmBtn) confirmBtn.click();
             }
         }
     });
 
-},  // ⬅ ปิด attachEventListeners()
-
+},
 
 }; // ⬅ ปิดอ็อบเจ็กต์ App
 
@@ -4478,3 +4491,4 @@ window.App = App;
 App.init();
 
 }); // ⬅ ปิด wrapper (เช่น DOMContentLoaded)
+
