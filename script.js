@@ -2804,7 +2804,9 @@ renderPos(payload = null) {
                     tbody.innerHTML = '';
                     this.data.products.forEach(p => {
                         const tr = document.createElement('tr');
+                        // [ปรับปรุง] เพิ่มคอลัมน์รหัสบาร์โค้ด
                         tr.innerHTML = `<td data-label="ชื่อสินค้า">${p.name}</td>
+                                        <td data-label="บาร์โค้ด">${p.barcode || '-'}</td> 
                                         <td data-label="สต็อก">${this.formatNumberSmart(p.stock)}</td>
                                         <td data-label="หน่วย">${p.unit}</td>
                                         <td data-label="จัดการ">
@@ -3655,11 +3657,18 @@ fillPages(){
         </form> 
         <div class="table-container">
             <table id="product-table"> 
-                <thead><tr><th>ชื่อสินค้า</th><th>สต็อก</th><th>หน่วย</th><th>จัดการ</th></tr></thead> 
+                <thead>
+                    <tr>
+                        <th>ชื่อสินค้า</th>
+                        <th>รหัสบาร์โค้ด</th> 
+                        <th>สต็อก</th>
+                        <th>หน่วย</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead> 
                 <tbody></tbody> 
             </table>
         </div>`;
-
     // หน้านำเข้าสินค้า
     document.getElementById('page-stock-in').innerHTML = `
         <h2>บันทึกการนำเข้าสินค้า</h2> 
